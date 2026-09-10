@@ -76,7 +76,7 @@ export default function StockDetailPage() {
           <button
             type="button"
             onClick={handleCopyLink}
-            className="rounded-md border px-4 py-2"
+            className="rounded-md border px-4 py-2  focus:outline-none focus:ring-2 focus:ring-offset-2"
           >
             Copy link
           </button>

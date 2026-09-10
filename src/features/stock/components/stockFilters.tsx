@@ -35,7 +35,7 @@ export function StockFilters({
           value={search}
           onChange={(event) => onSearchChange(event.target.value)}
           placeholder="Search stock..."
-          className="w-full rounded-md border px-3 py-2"
+          className="w-full rounded-md border px-3 py-2  focus:outline-none focus:ring-2 focus:ring-offset-2"
         />
       </div>
 

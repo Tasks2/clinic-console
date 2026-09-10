@@ -21,6 +21,9 @@ export function StockList({ products }: StockListProps) {
   return (
     <div className="overflow-x-auto rounded-lg border">
       <table className="w-full min-w-162.5 text-left text-sm">
+        <caption className="sr-only">
+          Current clinic stock
+        </caption>
         <thead className="border-b bg-gray-50">
           <tr>
             <th className="px-4 py-3 font-medium">Product</th>
@@ -47,7 +50,7 @@ export function StockList({ products }: StockListProps) {
               <td className="px-4 py-3">
                 <Link
                   to={`/stock/${product.id}`}
-                  className="font-medium underline"
+                  className="font-medium underline  focus:outline-none focus:ring-2 focus:ring-offset-2"
                 >
                   View
                 </Link>

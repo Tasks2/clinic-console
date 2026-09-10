@@ -95,7 +95,6 @@ export default function StockPage() {
   setSearchParams,
 ])
 
-  
 
   function updateFilters(updates: Record<string, string>) {
     const nextParams = new URLSearchParams(searchParams)
@@ -231,7 +230,7 @@ export default function StockPage() {
           type="button"
           onClick={handleNextPage}
           disabled={page >= totalPages}
-          className="rounded-md border px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50"
+          className="rounded-md border px-4 py-2 disabled:cursor-not-allowed disabled:opacity-50  focus:outline-none focus:ring-2 focus:ring-offset-2"
         >
           Next
         </button>
