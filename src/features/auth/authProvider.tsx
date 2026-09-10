@@ -1,30 +1,14 @@
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 
 import { getCurrentUser, login } from './authApi'
+import { AuthContext, type AuthContextValue } from './authContext'
 import type { AuthUser, LoginCredentials } from './authTypes'
-
-type AuthContextValue = {
-  user: AuthUser | null
-  accessToken: string | null
-  isAuthenticated: boolean
-  isLoading: boolean
-  loginUser: (credentials: LoginCredentials) => Promise<void>
-  logout: () => void
-}
-
-export const AuthContext = createContext<AuthContextValue | null>(null)
 
 const ACCESS_TOKEN_KEY = 'clinic-stock-access-token'
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [accessToken, setAccessToken] = useState<string | null>(
-    () => localStorage.getItem(ACCESS_TOKEN_KEY),
+  const [accessToken, setAccessToken] = useState<string | null>(() =>
+    localStorage.getItem(ACCESS_TOKEN_KEY),
   )
 
   const [user, setUser] = useState<AuthUser | null>(null)
@@ -83,19 +67,5 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logout,
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
-}
-
-export function useAuth() {
-  const context = useContext(AuthContext)
-
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
-  }
-
-  return context
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

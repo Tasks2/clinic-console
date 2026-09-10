@@ -6,8 +6,6 @@ import StockPage from '../pages/StockPage'
 import StockDetailPage from '../pages/StockDetailPage'
 import ProtectedRoute from '../features/auth/protectedRoute'
 
-
-
 export const router = createBrowserRouter([
   {
     path: '/login',

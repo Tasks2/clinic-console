@@ -1,14 +1,14 @@
 import { Link, Outlet } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../features/auth/authContext'
+import { useAuth } from '../features/auth/useAuth'
 
 function AppLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
 
   function handleLogout() {
-  logout()
-  navigate('/login')
+    logout()
+    navigate('/login')
   }
 
   return (
@@ -20,26 +20,23 @@ function AppLayout() {
           </Link>
 
           <nav>
-            <Link
-              to="/stock"
-              className="text-sm font-medium hover:underline"
-            >
+            <Link to="/stock" className="text-sm font-medium hover:underline">
               Stock
             </Link>
           </nav>
         </div>
         <div className="flex items-center gap-4">
-            <span className="text-sm">
-                {user?.firstName} {user?.lastName}
-            </span>
+          <span className="text-sm">
+           Welcome {user?.firstName} {user?.lastName}
+          </span>
 
-            <button
-                type="button"
-                onClick={handleLogout}
-                className="text-sm font-medium hover:underline"
-            >
-                Logout
-            </button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="text-sm font-medium hover:underline"
+          >
+            Logout
+          </button>
         </div>
       </header>
 

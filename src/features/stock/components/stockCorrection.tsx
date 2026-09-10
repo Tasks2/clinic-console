@@ -15,17 +15,13 @@ const stockCorrectionSchema = z.object({
     .min(0, 'Stock cannot be negative'),
 })
 
-type StockCorrectionForm = z.infer<
-  typeof stockCorrectionSchema
->
+type StockCorrectionForm = z.infer<typeof stockCorrectionSchema>
 
 interface StockCorrectionProps {
   product: Product
 }
 
-export function StockCorrection({
-  product,
-}: StockCorrectionProps) {
+export function StockCorrection({ product }: StockCorrectionProps) {
   const queryClient = useQueryClient()
 
   const {
@@ -41,8 +37,7 @@ export function StockCorrection({
   })
 
   const mutation = useMutation({
-    mutationFn: (stock: number) =>
-      updateProductStock(product.id, { stock }),
+    mutationFn: (stock: number) => updateProductStock(product.id, { stock }),
 
     onSuccess: (updatedProduct) => {
       queryClient.setQueryData(
@@ -66,19 +61,11 @@ export function StockCorrection({
 
   return (
     <section className="rounded-lg border p-6">
-      <h2 className="text-lg font-semibold">
-        Correct stock
-      </h2>
+      <h2 className="text-lg font-semibold">Correct stock</h2>
 
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="mt-4 space-y-4"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
         <div>
-          <label
-            htmlFor="stock"
-            className="mb-1 block text-sm font-medium"
-          >
+          <label htmlFor="stock" className="mb-1 block text-sm font-medium">
             Stock count
           </label>
 
@@ -91,18 +78,12 @@ export function StockCorrection({
               valueAsNumber: true,
             })}
             aria-invalid={Boolean(errors.stock)}
-            aria-describedby={
-              errors.stock ? 'stock-error' : undefined
-            }
+            aria-describedby={errors.stock ? 'stock-error' : undefined}
             className="w-full rounded-md border px-3 py-2"
           />
 
           {errors.stock && (
-            <p
-              id="stock-error"
-              role="alert"
-              className="mt-1 text-sm"
-            >
+            <p id="stock-error" role="alert" className="mt-1 text-sm">
               {errors.stock.message}
             </p>
           )}

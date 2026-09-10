@@ -17,29 +17,38 @@ export interface ProductsResponse {
   limit: number
 }
 
+export interface Category {
+  slug: string
+  name: string
+  url: string
+}
+
+export type SortField = 'title' | 'price' | 'stock'
+
 export interface StockQueryParams {
   search: string
   category: string
-  sort: string
+  sort: SortField
   order: 'asc' | 'desc'
   page: number
 }
 
+export interface UpdateStockPayload {
+  stock: number
+}
+
 const PAGE_SIZE = 10
 
-export async function getProducts({
-  search,
-  category,
-  sort,
-  order,
-  page,
-}: StockQueryParams, signal?: AbortSignal) {
+export async function getProducts(
+  { search, category, sort, order, page }: StockQueryParams,
+  signal?: AbortSignal,
+): Promise<ProductsResponse> {
   let products: Product[]
 
   if (category) {
     const response = await apiFetch<ProductsResponse>(
-      `/products/category/${encodeURIComponent(category)}`,
-      { signal }
+      `/products/category/${encodeURIComponent(category)}?limit=0`,
+      { signal },
     )
 
     products = response.products
@@ -51,32 +60,30 @@ export async function getProducts({
     }
   } else if (search) {
     const response = await apiFetch<ProductsResponse>(
-      `/products/search?q=${encodeURIComponent(search)}`,
+      `/products/search?q=${encodeURIComponent(search)}&limit=0`,
+      { signal },
     )
 
     products = response.products
   } else {
-    const response = await apiFetch<ProductsResponse>('/products')
+    const response = await apiFetch<ProductsResponse>('/products?limit=0', {
+      signal,
+    })
 
     products = response.products
   }
 
-  return sortProductsAndPaginate(
-    products,
-    sort,
-    order,
-    page,
-  )
+  return sortProductsAndPaginate(products, sort, order, page)
 }
 
 function sortProducts(
   products: Product[],
-  sort: string,
+  sort: SortField,
   order: 'asc' | 'desc',
-) {
+): Product[] {
   return [...products].sort((a, b) => {
-    const first = a[sort as keyof Product]
-    const second = b[sort as keyof Product]
+    const first = a[sort]
+    const second = b[sort]
 
     if (typeof first === 'number' && typeof second === 'number') {
       return order === 'asc' ? first - second : second - first
@@ -88,16 +95,17 @@ function sortProducts(
   })
 }
 
-
 function sortProductsAndPaginate(
   products: Product[],
-  sort: string,
+  sort: SortField,
   order: 'asc' | 'desc',
   page: number,
 ): ProductsResponse {
   const sorted = sortProducts(products, sort, order)
 
-  const start = (page - 1) * PAGE_SIZE
+  const safePage = Math.max(1, page)
+  const start = (safePage - 1) * PAGE_SIZE
+
   const paginatedProducts = sorted.slice(start, start + PAGE_SIZE)
 
   return {
@@ -108,24 +116,17 @@ function sortProductsAndPaginate(
   }
 }
 
-export function getProduct(id: string) {
-  return apiFetch<Product>(`/products/${id}`)
+export function getProduct(id: string, signal?: AbortSignal) {
+  return apiFetch<Product>(`/products/${encodeURIComponent(id)}`, { signal })
 }
 
-export async function getCategories() {
-  return apiFetch<string[]>('/products/category-list')
+export async function getCategories(): Promise<string[]> {
+  const categories = await apiFetch<Category[]>('/products/categories')
+
+  return categories.map((category) => category.slug)
 }
 
-export { PAGE_SIZE }
-
-export interface UpdateStockPayload {
-  stock: number
-}
-
-export function updateProductStock(
-  id: number,
-  payload: UpdateStockPayload,
-) {
+export function updateProductStock(id: number, payload: UpdateStockPayload) {
   return apiFetch<Product>(`/products/${id}`, {
     method: 'PUT',
     headers: {
@@ -134,3 +135,5 @@ export function updateProductStock(
     body: JSON.stringify(payload),
   })
 }
+
+export { PAGE_SIZE }

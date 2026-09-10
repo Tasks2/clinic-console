@@ -64,10 +64,7 @@ export function StockFilters({
       </div>
 
       <div>
-        <label
-          htmlFor="stock-sort"
-          className="mb-1 block text-sm font-medium"
-        >
+        <label htmlFor="stock-sort" className="mb-1 block text-sm font-medium">
           Sort
         </label>
 

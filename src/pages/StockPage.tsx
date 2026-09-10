@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useRef } from 'react'
 import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 
@@ -7,6 +7,7 @@ import {
   getProducts,
   PAGE_SIZE,
 } from '../features/stock/stockApi'
+import type { SortField } from '../features/stock/stockApi'
 import { StockFilters } from '../features/stock/components/stockFilters'
 import { StockList } from '../features/stock/components/stockList'
 
@@ -15,12 +16,16 @@ export default function StockPage() {
 
   const search = searchParams.get('search') ?? ''
   const category = searchParams.get('category') ?? ''
-  const sort = searchParams.get('sort') ?? 'title'
   const order = (searchParams.get('order') ?? 'asc') as 'asc' | 'desc'
   const page = Number(searchParams.get('page') ?? '1')
 
   const [searchInput, setSearchInput] = useState(search)
+  const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
+  const sortParam = searchParams.get('sort')
+
+  const sort: SortField =
+    sortParam === 'price' || sortParam === 'stock' ? sortParam : 'title'
   const filters = useMemo(
     () => ({
       search,
@@ -48,53 +53,15 @@ export default function StockPage() {
     ? Math.ceil(productsQuery.data.total / PAGE_SIZE)
     : 0
 
- const products = productsQuery.data?.products ?? []
-    
-  useEffect(() => {
-    setSearchInput(search)
-  }, [search])
+  const products = productsQuery.data?.products ?? []
 
   useEffect(() => {
-  const timeout = setTimeout(() => {
-    const trimmedSearch = searchInput.trim()
-
-    if (trimmedSearch === search) {
-      return
+    if (productsQuery.data && page > 1 && productsQuery.data.total === 0) {
+      const nextParams = new URLSearchParams(searchParams)
+      nextParams.set('page', '1')
+      setSearchParams(nextParams)
     }
-
-    const nextParams = new URLSearchParams(searchParams)
-
-    if (trimmedSearch) {
-      nextParams.set('search', trimmedSearch)
-    } else {
-      nextParams.delete('search')
-    }
-
-    nextParams.set('page', '1')
-
-    setSearchParams(nextParams)
-  }, 400)
-
-  return () => clearTimeout(timeout)
-}, [searchInput, search, searchParams, setSearchParams])
-
- useEffect(() => {
-  if (
-    productsQuery.data &&
-    page > 1 &&
-    productsQuery.data.total === 0
-  ) {
-    const nextParams = new URLSearchParams(searchParams)
-    nextParams.set('page', '1')
-    setSearchParams(nextParams)
-  }
-}, [
-  productsQuery.data,
-  page,
-  searchParams,
-  setSearchParams,
-])
-
+  }, [productsQuery.data, page, searchParams, setSearchParams])
 
   function updateFilters(updates: Record<string, string>) {
     const nextParams = new URLSearchParams(searchParams)
@@ -114,6 +81,26 @@ export default function StockPage() {
 
   function handleSearchChange(value: string) {
     setSearchInput(value)
+
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current)
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
+      const trimmedSearch = value.trim()
+
+      const nextParams = new URLSearchParams(searchParams)
+
+      if (trimmedSearch) {
+        nextParams.set('search', trimmedSearch)
+      } else {
+        nextParams.delete('search')
+      }
+
+      nextParams.set('page', '1')
+
+      setSearchParams(nextParams)
+    }, 400)
   }
 
   function handleCategoryChange(value: string) {
@@ -122,10 +109,7 @@ export default function StockPage() {
     })
   }
 
-  function handleSortChange(
-    newSort: string,
-    newOrder: 'asc' | 'desc',
-  ) {
+  function handleSortChange(newSort: string, newOrder: 'asc' | 'desc') {
     updateFilters({
       sort: newSort,
       order: newOrder,
@@ -152,8 +136,7 @@ export default function StockPage() {
     setSearchParams(nextParams)
   }
 
-  const isLoading =
-    productsQuery.isLoading || categoriesQuery.isLoading
+  const isLoading = productsQuery.isLoading || categoriesQuery.isLoading
 
   if (isLoading) {
     return (
