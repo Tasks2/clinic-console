@@ -4,17 +4,17 @@ An internal stock management console for clinic supplies teams. The application 
 
 ## Technology
 
-* React + TypeScript + Vite
-* React Router
-* TanStack Query
-* Tailwind CSS
-* React Hook Form + Zod
-* Native Fetch API
-* Vitest + React Testing Library
-* ESLint + Prettier
-* GitHub Actions
-* Vercel
-* DummyJSON API
+- React + TypeScript + Vite
+- React Router
+- TanStack Query
+- Tailwind CSS
+- React Hook Form + Zod
+- Native Fetch API
+- Vitest + React Testing Library
+- ESLint + Prettier
+- GitHub Actions
+- Vercel
+- DummyJSON API
 
 ## Interface and Component Design
 
@@ -71,10 +71,10 @@ Stock data, individual stock items and categories are managed using **TanStack Q
 
 Examples include:
 
-* Stock list data
-* Individual item details
-* Category data
-* Stock correction mutations
+- Stock list data
+- Individual item details
+- Category data
+- Stock correction mutations
 
 TanStack Query provides caching, loading/error states and request lifecycle management.
 
@@ -122,13 +122,13 @@ The interface uses Tailwind CSS utility classes rather than a separate design sy
 
 The design prioritizes:
 
-* Clear visual hierarchy
-* Consistent spacing
-* Simple borders and surfaces
-* Readable typography
-* Clear button states
-* Responsive layouts
-* Adequate touch targets for tablet use
+- Clear visual hierarchy
+- Consistent spacing
+- Simple borders and surfaces
+- Readable typography
+- Clear button states
+- Responsive layouts
+- Adequate touch targets for tablet use
 
 The interface intentionally uses a restrained visual style rather than adding unnecessary decoration, since this is an internal clinic console where finding and correcting stock quickly is more important than visual complexity.
 
@@ -138,10 +138,10 @@ The main layout is designed to remain usable from approximately 360px wide scree
 
 On smaller screens:
 
-* Controls can stack rather than becoming cramped.
-* The stock list remains usable without forcing the entire page to overflow.
-* Buttons and form controls retain practical touch targets.
-* Item details remain readable.
+- Controls can stack rather than becoming cramped.
+- The stock list remains usable without forcing the entire page to overflow.
+- Buttons and form controls retain practical touch targets.
+- Item details remain readable.
 
 ## Accessibility
 
@@ -149,15 +149,15 @@ Accessibility was considered as part of the implementation rather than as a sepa
 
 The application uses:
 
-* Semantic HTML where appropriate
-* Labels for form controls
-* Keyboard-accessible controls
-* Visible focus states
-* Disabled states for unavailable pagination actions
-* `role="alert"` for important error messages
-* Clear loading, empty and error states
-* Validation messages for invalid stock corrections
-* Information that is not communicated through colour alone
+- Semantic HTML where appropriate
+- Labels for form controls
+- Keyboard-accessible controls
+- Visible focus states
+- Disabled states for unavailable pagination actions
+- `role="alert"` for important error messages
+- Clear loading, empty and error states
+- Validation messages for invalid stock corrections
+- Information that is not communicated through colour alone
 
 ## Decision Log
 
